@@ -18,8 +18,11 @@ public class DateUtils {
         return difference.getYears();
     }
 
-    private static LocalDate convertDateToLocalDate(Date date) {
+    public static LocalDate convertDateToLocalDate(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
+    public static Date convertLocalDateToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
 }
