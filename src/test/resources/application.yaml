@@ -1,0 +1,23 @@
+settings:
+  minimum-allowed-age: 18
+server:
+  port: 8077
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_management_test
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      platform: org.hibernate.dialect.PostgreSQLDialect
+logging:
+  level:
+    org:
+      springframework=DEBUG:
