@@ -60,6 +60,7 @@ public class User {
     @Size(min = 5, max = 86)
     String address;
 
+    @Size(min = 6, max = 14)
     @Pattern(regexp = RegexPattern.PHONE.PHONE_NUMBER_REGEX_PATTERN,
              message = RegexPattern.PHONE.INVALID_PHONE_MESSAGE)
     String phoneNumber;

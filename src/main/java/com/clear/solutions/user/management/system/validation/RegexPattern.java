@@ -33,11 +33,10 @@ public class RegexPattern {
     @UtilityClass
     public class PHONE {
         /**
-         * The number may start with the character "+" (optional).
+         * The number may start with the character "+".
          * Then, the country code of 1 to 3 digits may follow (optional).
-         * After that, the phone number of length from 6 to 14 digits may follow (optional).
          */
-        public static final String PHONE_NUMBER_REGEX_PATTERN = "^(?:\\+?([0-9]{1,3}))?([0-9]{6,14})?$";
+        public static final String PHONE_NUMBER_REGEX_PATTERN = "^\\+([0-9]{1,3})?[0-9]*$";
         public static final String INVALID_PHONE_MESSAGE = "Invalid phone number";
     }
 
