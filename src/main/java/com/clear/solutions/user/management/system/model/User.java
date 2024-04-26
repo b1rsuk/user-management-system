@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,9 @@ import lombok.experimental.FieldDefaults;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email"})
+})
 @Getter
 @Setter
 @ToString
@@ -40,12 +43,12 @@ public class User {
            message = RegexPattern.EMAIL.INVALID_EMAIL_MESSAGE)
     String email;
 
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
              message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
     String firstName;
 
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
              message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
     String lastName;
@@ -57,7 +60,8 @@ public class User {
     @Size(max = 86)
     String address;
 
-    @Pattern(regexp = RegexPattern.PHONE.PHONE_NUMBER_REGEX_PATTERN, message = RegexPattern.PHONE.INVALID_PHONE_MESSAGE)
+    @Pattern(regexp = RegexPattern.PHONE.PHONE_NUMBER_REGEX_PATTERN,
+             message = RegexPattern.PHONE.INVALID_PHONE_MESSAGE)
     String phoneNumber;
 
 }
