@@ -57,7 +57,7 @@ public class User {
     @Past(message = "Value must be earlier than current date")
     Date birthDate;
 
-    @Size(max = 86)
+    @Size(min = 5, max = 86)
     String address;
 
     @Pattern(regexp = RegexPattern.PHONE.PHONE_NUMBER_REGEX_PATTERN,
