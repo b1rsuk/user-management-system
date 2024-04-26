@@ -25,15 +25,18 @@ public class UserDto {
 
     Long id;
 
-    @Email(regexp = RegexPattern.EMAIL_REGEX_PATTERN)
+    @Email(regexp = RegexPattern.EMAIL.EMAIL_REGEX_PATTERN,
+           message = RegexPattern.EMAIL.INVALID_EMAIL_MESSAGE)
     String email;
 
     @Size(max = 100)
-    @Pattern(regexp = RegexPattern.NAME_REGEX_PATTERN)
+    @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
+             message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
     String firstName;
 
     @Size(max = 100)
-    @Pattern(regexp = RegexPattern.NAME_REGEX_PATTERN)
+    @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
+             message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
     String lastName;
 
     @Temporal(TemporalType.DATE)
@@ -43,7 +46,8 @@ public class UserDto {
     @Size(max = 86)
     String address;
 
-    @Pattern(regexp = RegexPattern.PHONE_NUMBER_REGEX_PATTERN)
+    @Pattern(regexp = RegexPattern.PHONE.PHONE_NUMBER_REGEX_PATTERN,
+             message = RegexPattern.PHONE.INVALID_PHONE_MESSAGE)
     String phoneNumber;
 
 }
