@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> findAllUser(@RequestParam(value = "from", defaultValue = "1970-01-01")
+    public List<UserDto> findAllByBirthDateBetween(@RequestParam(value = "from", defaultValue = "1970-01-01")
                                      @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate from,
                                      @RequestParam(value = "to", defaultValue = "9999-12-31")
                                      @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate to) {
