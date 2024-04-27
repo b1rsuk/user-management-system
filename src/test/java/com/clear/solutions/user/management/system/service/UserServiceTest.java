@@ -2,8 +2,10 @@ package com.clear.solutions.user.management.system.service;
 
 import com.clear.solutions.user.management.system.ValidationUtils;
 import com.clear.solutions.user.management.system.model.User;
+import com.clear.solutions.user.management.system.model.dto.UserDto;
 import com.clear.solutions.user.management.system.rule.DatabaseCleanupRule;
 import com.clear.solutions.user.management.system.service.exception.AgeValidateException;
+import com.clear.solutions.user.management.system.service.filter.BirthDateRangeFilter;
 import com.clear.solutions.user.management.system.utils.DateUtils;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
@@ -22,8 +24,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,6 +45,57 @@ public class UserServiceTest {
     @Autowired
     public UserService userService;
 
+
+    @Test
+    @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
+    public void shouldFindAllByBirthDateBetween() {
+        List<UserDto> expectedUsers = new ArrayList<>();
+
+        UserDto user1 = new UserDto(1L, "example1@example.com", "Ivan", "Petrov", convertToDate("1990-05-15"), "Shevchenko Street, building 10, apartment 5, Kyiv, Ukraine", "+380991234567");
+        expectedUsers.add(user1);
+
+        UserDto user2 = new UserDto(2L, "example2@example.com", "Maria", "Ivanova", convertToDate("1985-12-20"), "Lesya Ukrainka Street, building 25, Lviv, Ukraine", "+380982345678");
+        expectedUsers.add(user2);
+
+        UserDto user3 = new UserDto(5L, "example5@example.com", "Andrii", "Morozov", convertToDate("1982-09-12"), "Stepan Bandera Street, building 14, Odessa, Ukraine", "+380955678901");
+        expectedUsers.add(user3);
+
+        UserDto user4 = new UserDto(6L, "example6@example.com", "Olena", "Kravchuk", convertToDate("1989-11-03"), null, null);
+        expectedUsers.add(user4);
+
+        UserDto user5 = new UserDto(8L, "example8@example.com", "Yulia", "Kozlova", convertToDate("1987-08-22"), "Independence Avenue, building 60, Zaporizhzhia, Ukraine", null);
+        expectedUsers.add(user5);
+
+        UserDto user6 = new UserDto(10L, "example10@example.com", "Nataliia", "Boiko", convertToDate("1980-02-10"), "Hrushevskoho Street, building 17, Cherkasy, Ukraine", "+380900123456");
+        expectedUsers.add(user6);
+
+
+        LocalDate from = LocalDate.parse("1978-08-08");
+        LocalDate to = LocalDate.parse("1990-08-08");
+        BirthDateRangeFilter birthDateRangeFilter = new BirthDateRangeFilter(from, to);
+        List<UserDto> actual = userService.findAllByBirthDateBetween(birthDateRangeFilter);
+        assertEquals(expectedUsers, actual);
+    }
+
+    @Test
+    @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
+    @ExpectedDatabase(value = "classpath:user_service/expected_for_update_user.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void shouldUpdateUser() {
+        User user = new User();
+
+        Date birthDate = convertToDate("1978-08-08");
+        user.setBirthDate(birthDate);
+
+        user.setPhoneNumber("+380974456789");
+
+        User updatedUser = userService.update(3L, user);
+
+        assertAll(
+                () -> assertEquals(birthDate, updatedUser.getBirthDate()),
+                () -> assertEquals("+380974456789", updatedUser.getPhoneNumber())
+        );
+    }
+
     @Test
     @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
     @ExpectedDatabase(value = "classpath:user_service/expected_for_create_user.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
@@ -48,9 +104,7 @@ public class UserServiceTest {
         user.setAddress("789 Oak Street, Somewhere, USA");
         user.setEmail("user@example.com");
 
-        LocalDate localDate = LocalDate.parse("2005-04-25");
-        Date birthDateUser = DateUtils.convertLocalDateToDate(localDate);
-
+        Date birthDateUser = convertToDate("2005-04-25");
         user.setBirthDate(birthDateUser);
 
         user.setFirstName("Alice");
@@ -316,4 +370,8 @@ public class UserServiceTest {
         return user;
     }
 
+    private Date convertToDate(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return DateUtils.convertLocalDateToDate(localDate);
+    }
 }
