@@ -2,7 +2,7 @@ package com.clear.solutions.user.management.system.model.dto;
 
 import com.clear.solutions.user.management.system.model.BaseUser;
 import com.clear.solutions.user.management.system.validation.RegexPattern;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Email;
@@ -25,9 +25,9 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Validated
+@JsonIgnoreProperties(value={ "id" }, allowGetters=true)
 public class UserDto implements BaseUser {
 
-    @JsonIgnore
     Long id;
 
     @Email(regexp = RegexPattern.EMAIL.EMAIL_REGEX_PATTERN,
