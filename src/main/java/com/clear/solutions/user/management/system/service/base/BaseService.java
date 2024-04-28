@@ -11,8 +11,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional
 public class BaseService<T extends BaseEntity, V extends CrudRepository<T, Long>> {
-
     private final V crudRepository;
+
+    public boolean existsById(Long id) {
+        return crudRepository.existsById(id);
+    }
 
     public T save(T entity)  {
         Long entityId = entity.getId();
@@ -35,6 +38,14 @@ public class BaseService<T extends BaseEntity, V extends CrudRepository<T, Long>
                 .setSkipNullEnabled(true);
 
         modelMapper.map(entity, dbEntity);
+    }
+
+    public void deleteById(Long id) {
+        if (!existsById(id)) {
+            throw new EntityNotFoundException(id);
+        }
+
+        crudRepository.deleteById(id);
     }
 
 }
