@@ -13,7 +13,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -55,13 +54,11 @@ public class User implements BaseEntity, BaseUser {
     @Size(min = 2, max = 100)
     @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
              message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
-    @NotBlank
     String firstName;
 
     @Size(min = 2, max = 100)
     @Pattern(regexp = RegexPattern.NAME.NAME_REGEX_PATTERN,
              message = RegexPattern.NAME.INVALID_NAME_MESSAGE)
-    @NotBlank
     String lastName;
 
     @Temporal(TemporalType.DATE)

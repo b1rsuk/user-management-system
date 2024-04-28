@@ -4,8 +4,8 @@ import com.clear.solutions.user.management.system.ValidationUtils;
 import com.clear.solutions.user.management.system.model.User;
 import com.clear.solutions.user.management.system.model.dto.UserDto;
 import com.clear.solutions.user.management.system.rule.DatabaseCleanupRule;
+import com.clear.solutions.user.management.system.service.base.exception.EntityNotFoundException;
 import com.clear.solutions.user.management.system.service.exception.AgeValidateException;
-import com.clear.solutions.user.management.system.service.exception.UserNotFoundException;
 import com.clear.solutions.user.management.system.service.filter.BirthDateRangeFilter;
 import com.clear.solutions.user.management.system.utils.DateUtils;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -84,14 +84,14 @@ public class UserServiceTest {
     @ExpectedDatabase(value = "classpath:user_service/expected_for_deleted_user.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void shouldDeleteUser() {
         userService.deleteById(8L);
-        assertFalse(userService.userExistsById(8L));
+        assertFalse(userService.existsById(8L));
     }
 
     @Test
     @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
     public void shouldDeleteNotExistsUser() {
-        UserNotFoundException userNotFoundException = assertThrows(UserNotFoundException.class, () -> userService.deleteById(29L));
-        assertEquals("User not found with id: 29", userNotFoundException.getMessage());
+        EntityNotFoundException entityNotFoundException = assertThrows(EntityNotFoundException.class, () -> userService.deleteById(29L));
+        assertEquals("Entity not found with id: 29", entityNotFoundException.getMessage());
     }
 
     @Test
@@ -281,7 +281,7 @@ public class UserServiceTest {
         user.setFirstName("   ");
         ConstraintViolationException exceptionWhenFirstNameIsEmpty = assertThrows(ConstraintViolationException.class, () -> userService.save(user));
 
-        assertEquals("must not be blank", ValidationUtils.extractConstraintViolationsMessage(exceptionWhenFirstNameIsEmpty));
+        assertEquals("Invalid name format", ValidationUtils.extractConstraintViolationsMessage(exceptionWhenFirstNameIsEmpty));
     }
 
     @Test
@@ -339,6 +339,16 @@ public class UserServiceTest {
         assertEquals("Invalid name format", ValidationUtils.extractConstraintViolationsMessage(exceptionWhenLastNameContainsSpaces));
     }
 
+    @Test
+    @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
+    public void shouldThrowExceptionWhenLastNameIsEmpty() {
+        User user = generateTemplateUser();
+
+        user.setLastName("   ");
+        ConstraintViolationException exceptionWhenLastNameIsEmpty = assertThrows(ConstraintViolationException.class, () -> userService.save(user));
+
+        assertEquals("Invalid name format", ValidationUtils.extractConstraintViolationsMessage(exceptionWhenLastNameIsEmpty));
+    }
 
     @Test
     @Sql(scripts = {"classpath:initial_db.sql", "classpath:user_service/initial_for_user.sql"})
