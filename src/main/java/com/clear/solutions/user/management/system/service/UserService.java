@@ -6,6 +6,7 @@ import com.clear.solutions.user.management.system.model.dto.UserDto;
 import com.clear.solutions.user.management.system.repository.UserRepository;
 import com.clear.solutions.user.management.system.service.base.BaseService;
 import com.clear.solutions.user.management.system.service.exception.AgeValidateException;
+import com.clear.solutions.user.management.system.service.exception.UserNotFoundException;
 import com.clear.solutions.user.management.system.service.filter.BirthDateRangeFilter;
 import com.clear.solutions.user.management.system.utils.DateUtils;
 import jakarta.transaction.Transactional;
@@ -31,15 +32,6 @@ public class UserService extends BaseService<User, CrudRepository<User, Long>> {
         this.minimumAllowedAge = minimumAllowedAge;
     }
 
-    public List<UserDto> findAllByBirthDateBetween(BirthDateRangeFilter birthDateRangeFilter) {
-        Date from = birthDateRangeFilter.getFrom();
-        Date to = birthDateRangeFilter.getTo();
-
-        return userRepository.findAllByBirthDateBetween(from, to).stream()
-                .map(User::convertToDto)
-                .toList();
-    }
-
     public User update(Long id, BaseUser user) {
         User convertedToUser = convertToEntity(user);
         convertedToUser.setId(id);
@@ -57,6 +49,27 @@ public class UserService extends BaseService<User, CrudRepository<User, Long>> {
         validateUser(user);
 
         return super.save(user);
+    }
+
+    public List<UserDto> findAllByBirthDateBetween(BirthDateRangeFilter birthDateRangeFilter) {
+        Date from = birthDateRangeFilter.getFrom();
+        Date to = birthDateRangeFilter.getTo();
+
+        return userRepository.findAllByBirthDateBetween(from, to).stream()
+                .map(User::convertToDto)
+                .toList();
+    }
+
+    public void deleteById(Long id) {
+        if (!userExistsById(id)) {
+            throw new UserNotFoundException(id);
+        }
+
+        userRepository.deleteById(id);
+    }
+
+    public boolean userExistsById(Long id) {
+        return userRepository.existsById(id);
     }
 
     private void validateUser(User user) {
