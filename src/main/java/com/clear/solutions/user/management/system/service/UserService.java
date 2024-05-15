@@ -23,12 +23,12 @@ public class UserService extends BaseService<User, CrudRepository<User, Long>> {
 
     private final UserRepository userRepository;
 
-    private final int minimumAllowedAge;
+    private final int minimumAllowedAgeInYears;
 
-    public UserService(UserRepository userRepository, @Value("${settings.minimum-allowed-age}") int minimumAllowedAge) {
+    public UserService(UserRepository userRepository, @Value("${minimum-allowed-age.in-years}") int minimumAllowedAgeInYears) {
         super(userRepository);
         this.userRepository = userRepository;
-        this.minimumAllowedAge = minimumAllowedAge;
+        this.minimumAllowedAgeInYears = minimumAllowedAgeInYears;
     }
 
     public List<UserDto> findAllByBirthDateBetween(BirthDateRangeFilter birthDateRangeFilter) {
@@ -69,12 +69,12 @@ public class UserService extends BaseService<User, CrudRepository<User, Long>> {
 
     private void validateAge(Date birthDate) {
         if (!isAgeAllowed(birthDate)) {
-            throw new AgeValidateException(minimumAllowedAge);
+            throw new AgeValidateException(minimumAllowedAgeInYears);
         }
     }
 
     private boolean isAgeAllowed(Date birthDate) {
-        return DateUtils.convertToYears(birthDate) >= minimumAllowedAge;
+        return DateUtils.convertToYears(birthDate) >= minimumAllowedAgeInYears;
     }
 
     public User convertToEntity(BaseUser userDto) {

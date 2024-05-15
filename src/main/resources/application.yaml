@@ -1,5 +1,5 @@
-settings:
-  minimum-allowed-age: 18
+minimum-allowed-age:
+  in-years: 18
 server:
   port: 8077
 spring:
